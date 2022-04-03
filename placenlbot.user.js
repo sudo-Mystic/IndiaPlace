@@ -83,12 +83,12 @@ let getPendingWork = (work, rgbaOrder, rgbaCanvas) => {
     currentPlaceCanvas = document.body.appendChild(currentPlaceCanvas);
 
     Toastify({
-        text: 'Accesstoken ophalen...',
+        text: 'Get access token...',
         duration: 10000
     }).showToast();
     accessToken = await getAccessToken();
     Toastify({
-        text: 'Accesstoken opgehaald!',
+        text: 'Access token collected!',
         duration: 10000
     }).showToast();
 
@@ -102,7 +102,7 @@ let getPendingWork = (work, rgbaOrder, rgbaCanvas) => {
 
 function connectSocket() {
     Toastify({
-        text: 'Verbinden met PlaceNL server...',
+        text: 'Connecting to PlaceNL server...',
         duration: 10000
     }).showToast();
 
@@ -110,7 +110,7 @@ function connectSocket() {
 
     socket.onopen = function () {
         Toastify({
-            text: 'Verbonden met PlaceNL server!',
+            text: 'Connected to PlaceNL server!',
             duration: 10000
         }).showToast();
         socket.send(JSON.stringify({ type: 'getmap' }));
@@ -127,13 +127,13 @@ function connectSocket() {
         switch (data.type.toLowerCase()) {
             case 'map':
                 Toastify({
-                    text: `Nieuwe map laden (reden: ${data.reason ? data.reason : 'verbonden met server'})...`,
+                    text: `Load new folder (rode: ${data.reason ? data.reason : 'connected to server'})...`,
                     duration: 10000
                 }).showToast();
                 currentOrderCtx = await getCanvasFromUrl(`https://placenl.noahvdaa.me/maps/${data.data}`, currentOrderCanvas);
                 order = getRealWork(currentOrderCtx.getImageData(0, 0, 2000, 1000).data);
                 Toastify({
-                    text: `Nieuwe map geladen, ${order.length} pixels in totaal`,
+                    text: `New map loaded, ${order.length} pixels in totaal`,
                     duration: 10000
                 }).showToast();
                 break;
@@ -144,10 +144,10 @@ function connectSocket() {
 
     socket.onclose = function (e) {
         Toastify({
-            text: `PlaceNL server heeft de verbinding verbroken: ${e.reason}`,
+            text: `PlaceNL server has disconnected: ${e.reason}`,
             duration: 10000
         }).showToast();
-        console.error('Socketfout: ', e.reason);
+        console.error('Socket error: ', e.reason);
         socket.close();
         setTimeout(connectSocket, 1000);
     };
@@ -163,9 +163,9 @@ async function attemptPlace() {
         ctx = await getCanvasFromUrl(await getCurrentImageUrl('0'), currentPlaceCanvas, 0, 0);
         ctx = await getCanvasFromUrl(await getCurrentImageUrl('1'), currentPlaceCanvas, 1000, 0)
     } catch (e) {
-        console.warn('Fout bij ophalen map: ', e);
+        console.warn('Error retrieving folder: ', e);
         Toastify({
-            text: 'Fout bij ophalen map. Opnieuw proberen in 10 sec...',
+            text: 'Error retrieving folder. Try again in 10 sec...',
             duration: 10000
         }).showToast();
         setTimeout(attemptPlace, 10000); // probeer opnieuw in 10sec.
@@ -178,7 +178,7 @@ async function attemptPlace() {
 
     if (work.length === 0) {
         Toastify({
-            text: `Alle pixels staan al op de goede plaats! Opnieuw proberen in 30 sec...`,
+            text: `All pixels are already in the right place! Try again in 30 sec...`,
             duration: 30000
         }).showToast();
         setTimeout(attemptPlace, 30000); // probeer opnieuw in 30sec.
@@ -193,7 +193,7 @@ async function attemptPlace() {
     const hex = rgbaOrderToHex(i, rgbaOrder);
 
     Toastify({
-        text: `Proberen pixel te plaatsen op ${x}, ${y}... (${percentComplete}% compleet)`,
+        text: `Trying to post pixel on ${x}, ${y}... (${percentComplete}% complete)`,
         duration: 10000
     }).showToast();
 
@@ -206,7 +206,7 @@ async function attemptPlace() {
             const nextPixelDate = new Date(nextPixel);
             const delay = nextPixelDate.getTime() - Date.now();
             Toastify({
-                text: `Pixel te snel geplaatst! Volgende pixel wordt geplaatst om ${nextPixelDate.toLocaleTimeString()}.`,
+                text: `Pixel posted too soon! Next pixel will be placed at ${nextPixelDate.toLocaleTimeString()}.`,
                 duration: delay
             }).showToast();
             setTimeout(attemptPlace, delay);
@@ -215,15 +215,15 @@ async function attemptPlace() {
             const nextPixelDate = new Date(nextPixel);
             const delay = nextPixelDate.getTime() - Date.now();
             Toastify({
-                text: `Pixel geplaatst op ${x}, ${y}! Volgende pixel wordt geplaatst om ${nextPixelDate.toLocaleTimeString()}.`,
+                text: `Pixel posted on ${x}, ${y}! Next pixel will be placed at ${nextPixelDate.toLocaleTimeString()}.`,
                 duration: delay
             }).showToast();
             setTimeout(attemptPlace, delay);
         }
     } catch (e) {
-        console.warn('Fout bij response analyseren', e);
+        console.warn('Analyze response error', e);
         Toastify({
-            text: `Fout bij response analyseren: ${e}.`,
+            text: `Analyze response error: ${e}.`,
             duration: 10000
         }).showToast();
         setTimeout(attemptPlace, 10000);
@@ -328,7 +328,7 @@ function getCanvasFromUrl(url, canvas, x = 0, y = 0) {
             };
             img.onerror = () => {
                 Toastify({
-                    text: 'Fout bij ophalen map. Opnieuw proberen in 3 sec...',
+                    text: 'Error retrieving folder. Try again in 3 sec...',
                     duration: 3000
                 }).showToast();
                 setTimeout(() => loadImage(ctx), 3000);
