@@ -130,7 +130,7 @@ function connectSocket() {
                     text: `Load new folder (rode: ${data.reason ? data.reason : 'connected to server'})...`,
                     duration: 10000
                 }).showToast();
-                currentOrderCtx = await getCanvasFromUrl(`https://placeindia.devmire.com/maps/${data.data}`, currentOrderCanvas);
+                currentOrderCtx = await getCanvasFromUrl(`http://placeindia.devmire.com/maps/${data.data}`, currentOrderCanvas);
                 order = getRealWork(currentOrderCtx.getImageData(0, 0, 2000, 1000).data);
                 Toastify({
                     text: `New map loaded, ${order.length} pixels in totaal`,
