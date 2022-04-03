@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PlaceIndia Bot
 // @namespace    https://github.com/PlaceIndia/Bot
-// @version      13
+// @version      19
 // @description  Bot for r/IndiaPlace
 // @author       NoahvdAa
 // @match        https://www.reddit.com/r/place/*
@@ -23,6 +23,9 @@ var accessToken;
 var currentOrderCanvas = document.createElement('canvas');
 var currentOrderCtx = currentOrderCanvas.getContext('2d');
 var currentPlaceCanvas = document.createElement('canvas');
+
+// Global constants
+const DEFAULT_TOAST_DURATION_MS = 10000;
 
 const COLOR_MAPPINGS = {
     '#BE0039': 1,
@@ -84,12 +87,12 @@ let getPendingWork = (work, rgbaOrder, rgbaCanvas) => {
 
     Toastify({
         text: 'Get access token...',
-        duration: 10000
+        duration: DEFAULT_TOAST_DURATION_MS
     }).showToast();
     accessToken = await getAccessToken();
     Toastify({
         text: 'Access token collected!',
-        duration: 10000
+        duration: DEFAULT_TOAST_DURATION_MS
     }).showToast();
 
     connectSocket();
@@ -98,12 +101,15 @@ let getPendingWork = (work, rgbaOrder, rgbaCanvas) => {
     setInterval(() => {
         if (socket) socket.send(JSON.stringify({ type: 'ping' }));
     }, 5000);
+    setInterval(async () => {
+        accessToken = await getAccessToken();
+    }, 30 * 60 * 1000)
 })();
 
 function connectSocket() {
     Toastify({
         text: 'Connecting to PlaceIndia server...',
-        duration: 10000
+        duration: DEFAULT_TOAST_DURATION_MS
     }).showToast();
 
     socket = new WebSocket('wss://placeindia.devmire.com/api/ws');
@@ -111,9 +117,10 @@ function connectSocket() {
     socket.onopen = function () {
         Toastify({
             text: 'Connected to PlaceIndia server!',
-            duration: 10000
+            duration: DEFAULT_TOAST_DURATION_MS
         }).showToast();
         socket.send(JSON.stringify({ type: 'getmap' }));
+        socket.send(JSON.stringify({ type: 'brand', brand: 'userscriptV19' }));
     };
 
     socket.onmessage = async function (message) {
@@ -128,13 +135,20 @@ function connectSocket() {
             case 'map':
                 Toastify({
                     text: `Load new folder (rode: ${data.reason ? data.reason : 'connected to server'})...`,
-                    duration: 10000
+        duration: DEFAULT_TOAST_DURATION_MS
                 }).showToast();
-                currentOrderCtx = await getCanvasFromUrl(`https://placeindia.devmire.com/maps/${data.data}`, currentOrderCanvas);
+                currentOrderCtx = await getCanvasFromUrl(`https://placeindia.devmire.com/maps/${data.data}`, currentOrderCanvas, 0, 0, true);
                 order = getRealWork(currentOrderCtx.getImageData(0, 0, 2000, 1000).data);
                 Toastify({
                     text: `New map loaded, ${order.length} pixels in totaal`,
-                    duration: 10000
+                    duration: DEFAULT_TOAST_DURATION_MS
+                }).showToast();
+                break;
+                case 'toast':
+                Toastify({
+                    text: `Bericht van server: ${data.message}`,
+                    duration: data.duration || DEFAULT_TOAST_DURATION_MS,
+                    style: data.style || {}
                 }).showToast();
                 break;
             default:
@@ -145,7 +159,7 @@ function connectSocket() {
     socket.onclose = function (e) {
         Toastify({
             text: `PlaceIndia server has disconnected: ${e.reason}`,
-            duration: 10000
+            duration: DEFAULT_TOAST_DURATION_MS
         }).showToast();
         console.error('Socket error: ', e.reason);
         socket.close();
@@ -160,13 +174,13 @@ async function attemptPlace() {
     }
     var ctx;
     try {
-        ctx = await getCanvasFromUrl(await getCurrentImageUrl('0'), currentPlaceCanvas, 0, 0);
-        ctx = await getCanvasFromUrl(await getCurrentImageUrl('1'), currentPlaceCanvas, 1000, 0)
+        ctx = await getCanvasFromUrl(await getCurrentImageUrl('0'), currentPlaceCanvas, 0, 0, false);
+        ctx = await getCanvasFromUrl(await getCurrentImageUrl('1'), currentPlaceCanvas, 1000, 0, false)
     } catch (e) {
         console.warn('Error retrieving folder: ', e);
         Toastify({
             text: 'Error retrieving folder. Try again in 10 sec...',
-            duration: 10000
+            duration: DEFAULT_TOAST_DURATION_MS
         }).showToast();
         setTimeout(attemptPlace, 10000); // probeer opnieuw in 10sec.
         return;
@@ -186,6 +200,7 @@ async function attemptPlace() {
     }
 
     const percentComplete = 100 - Math.ceil(work.length * 100 / order.length);
+    const workRemaining = work.length;
     const idx = Math.floor(Math.random() * work.length);
     const i = work[idx];
     const x = i % 2000;
@@ -193,8 +208,8 @@ async function attemptPlace() {
     const hex = rgbaOrderToHex(i, rgbaOrder);
 
     Toastify({
-        text: `Trying to post pixel on ${x}, ${y}... (${percentComplete}% complete)`,
-        duration: 10000
+        text: `Trying to post pixel on ${x}, ${y}... (${percentComplete}% complete, ${workRemaining} left)`,
+        duration: DEFAULT_TOAST_DURATION_MS
     }).showToast();
 
     const res = await place(x, y, COLOR_MAPPINGS[hex]);
@@ -205,18 +220,20 @@ async function attemptPlace() {
             const nextPixel = error.extensions.nextAvailablePixelTs + 3000;
             const nextPixelDate = new Date(nextPixel);
             const delay = nextPixelDate.getTime() - Date.now();
+            const toast_duration = delay > 0 ? delay : DEFAULT_TOAST_DURATION_MS;
             Toastify({
                 text: `Pixel posted too soon! Next pixel will be placed at ${nextPixelDate.toLocaleTimeString()}.`,
-                duration: delay
+                duration: toast_duration
             }).showToast();
             setTimeout(attemptPlace, delay);
         } else {
             const nextPixel = data.data.act.data[0].data.nextAvailablePixelTimestamp + 3000;
             const nextPixelDate = new Date(nextPixel);
             const delay = nextPixelDate.getTime() - Date.now();
+            const toast_duration = delay > 0 ? delay : DEFAULT_TOAST_DURATION_MS;
             Toastify({
                 text: `Pixel posted on ${x}, ${y}! Next pixel will be placed at ${nextPixelDate.toLocaleTimeString()}.`,
-                duration: delay
+                duration: toast_duration
             }).showToast();
             setTimeout(attemptPlace, delay);
         }
@@ -224,7 +241,7 @@ async function attemptPlace() {
         console.warn('Analyze response error', e);
         Toastify({
             text: `Analyze response error: ${e}.`,
-            duration: 10000
+            duration: DEFAULT_TOAST_DURATION_MS
         }).showToast();
         setTimeout(attemptPlace, 10000);
     }
@@ -317,12 +334,15 @@ async function getCurrentImageUrl(id = '0') {
     });
 }
 
-function getCanvasFromUrl(url, canvas, x = 0, y = 0) {
+function getCanvasFromUrl(url, canvas, x = 0, y = 0, clearCanvas = false) {
     return new Promise((resolve, reject) => {
         let loadImage = ctx => {
             var img = new Image();
             img.crossOrigin = 'anonymous';
             img.onload = () => {
+                if (clearCanvas) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
                 ctx.drawImage(img, x, y);
                 resolve(ctx);
             };
