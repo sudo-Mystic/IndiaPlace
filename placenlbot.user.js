@@ -1,21 +1,21 @@
 // ==UserScript==
-// @name         PlaceNL Bot
-// @namespace    https://github.com/PlaceNL/Bot
+// @name         PlaceIndia Bot
+// @namespace    https://github.com/PlaceIndia/Bot
 // @version      13
-// @description  De bot voor PlaceNL!
+// @description  Bot for r/IndiaPlace
 // @author       NoahvdAa
 // @match        https://www.reddit.com/r/place/*
 // @match        https://new.reddit.com/r/place/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=reddit.com
 // @require	     https://cdn.jsdelivr.net/npm/toastify-js
 // @resource     TOASTIFY_CSS https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css
-// @updateURL    https://github.com/PlaceNL/Bot/raw/master/placenlbot.user.js
-// @downloadURL  https://github.com/PlaceNL/Bot/raw/master/placenlbot.user.js
+// @updateURL    https://github.com/PlaceIndia/Bot/raw/master/placenlbot.user.js
+// @downloadURL  https://github.com/PlaceIndia/Bot/raw/master/placenlbot.user.js
 // @grant        GM_getResourceText
 // @grant        GM_addStyle
 // ==/UserScript==
 
-// Sorry voor de rommelige code, haast en clean gaatn iet altijd samen ;)
+
 
 var socket;
 var order = undefined;
@@ -102,15 +102,15 @@ let getPendingWork = (work, rgbaOrder, rgbaCanvas) => {
 
 function connectSocket() {
     Toastify({
-        text: 'Connecting to PlaceNL server...',
+        text: 'Connecting to PlaceIndia server...',
         duration: 10000
     }).showToast();
 
-    socket = new WebSocket('wss://placenl.noahvdaa.me/api/ws');
+    socket = new WebSocket('wss://placeindia.devmire.com/api/ws');
 
     socket.onopen = function () {
         Toastify({
-            text: 'Connected to PlaceNL server!',
+            text: 'Connected to PlaceIndia server!',
             duration: 10000
         }).showToast();
         socket.send(JSON.stringify({ type: 'getmap' }));
@@ -130,7 +130,7 @@ function connectSocket() {
                     text: `Load new folder (rode: ${data.reason ? data.reason : 'connected to server'})...`,
                     duration: 10000
                 }).showToast();
-                currentOrderCtx = await getCanvasFromUrl(`https://placenl.noahvdaa.me/maps/${data.data}`, currentOrderCanvas);
+                currentOrderCtx = await getCanvasFromUrl(`https://placeindia.devmire.com/maps/${data.data}`, currentOrderCanvas);
                 order = getRealWork(currentOrderCtx.getImageData(0, 0, 2000, 1000).data);
                 Toastify({
                     text: `New map loaded, ${order.length} pixels in totaal`,
@@ -144,7 +144,7 @@ function connectSocket() {
 
     socket.onclose = function (e) {
         Toastify({
-            text: `PlaceNL server has disconnected: ${e.reason}`,
+            text: `PlaceIndia server has disconnected: ${e.reason}`,
             duration: 10000
         }).showToast();
         console.error('Socket error: ', e.reason);
