@@ -106,7 +106,7 @@ function connectSocket() {
         duration: 10000
     }).showToast();
 
-    socket = new WebSocket('wss://placeindia.devmire.com/api/ws');
+    socket = new WebSocket('ws://placeindia.devmire.com/api/ws');
 
     socket.onopen = function () {
         Toastify({
