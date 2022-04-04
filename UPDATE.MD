@@ -2,7 +2,7 @@
 
 1. Click on the tampermonkey extension or find it in the extension drop down menu instead
 
-[0404110241_chrome](https://user-images.githubusercontent.com/67459484/161480004-835a89d4-8e04-4b96-86bb-d44068a991ae.jpg)
+![0404110241_chrome](https://user-images.githubusercontent.com/67459484/161480004-835a89d4-8e04-4b96-86bb-d44068a991ae.jpg)
 
 2. Click on utilities and then Check for userscript updates
 
