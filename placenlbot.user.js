@@ -1,21 +1,22 @@
 // ==UserScript==
-// @name         PlaceIndia Bot
-// @namespace    https://github.com/PlaceIndia/Bot
-// @version      19
-// @description  Bot for r/IndiaPlace
+// @name         IndiaPlace Bot
+// @namespace    https://github.com/pewpasta/Bot-1
+// @version      21
+// @description  Bot for r/IndiaPlace!
 // @author       NoahvdAa
 // @match        https://www.reddit.com/r/place/*
 // @match        https://new.reddit.com/r/place/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=reddit.com
 // @require	     https://cdn.jsdelivr.net/npm/toastify-js
 // @resource     TOASTIFY_CSS https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css
-// @updateURL    https://github.com/PlaceIndia/Bot/raw/master/placenlbot.user.js
-// @downloadURL  https://github.com/PlaceIndia/Bot/raw/master/placenlbot.user.js
+// @updateURL    https://github.com/pewpasta/Bot-1/raw/master/placenlbot.user.js
+// @downloadURL  https://github.com/pewpasta/Bot-1/raw/master/placenlbot.user.js
 // @grant        GM_getResourceText
 // @grant        GM_addStyle
+// @grant        GM.xmlHttpRequest
 // ==/UserScript==
 
-
+// Sorry voor de rommelige code, haast en clean gaatn iet altijd samen ;)
 
 var socket;
 var order = undefined;
@@ -28,27 +29,35 @@ var currentPlaceCanvas = document.createElement('canvas');
 const DEFAULT_TOAST_DURATION_MS = 10000;
 
 const COLOR_MAPPINGS = {
+    '#6D001A': 0,
     '#BE0039': 1,
     '#FF4500': 2,
     '#FFA800': 3,
     '#FFD635': 4,
+    '#FFF8B8': 5,
     '#00A368': 6,
     '#00CC78': 7,
     '#7EED56': 8,
     '#00756F': 9,
     '#009EAA': 10,
+    '#00CCC0': 11,
     '#2450A4': 12,
     '#3690EA': 13,
     '#51E9F4': 14,
     '#493AC1': 15,
     '#6A5CFF': 16,
+    '#94B3FF': 17,
     '#811E9F': 18,
     '#B44AC0': 19,
+    '#E4ABFF': 20,
+    '#DE107F': 21,
     '#FF3881': 22,
     '#FF99AA': 23,
     '#6D482F': 24,
     '#9C6926': 25,
+    '#FFB470': 26,
     '#000000': 27,
+    '#515252': 28,
     '#898D90': 29,
     '#D4D7D9': 30,
     '#FFFFFF': 31
@@ -56,7 +65,7 @@ const COLOR_MAPPINGS = {
 
 let getRealWork = rgbaOrder => {
     let order = [];
-    for (var i = 0; i < 2000000; i++) {
+    for (var i = 0; i < 4000000; i++) {
         if (rgbaOrder[(i * 4) + 3] !== 0) {
             order.push(i);
         }
@@ -77,16 +86,16 @@ let getPendingWork = (work, rgbaOrder, rgbaCanvas) => {
 (async function () {
     GM_addStyle(GM_getResourceText('TOASTIFY_CSS'));
     currentOrderCanvas.width = 2000;
-    currentOrderCanvas.height = 1000;
+    currentOrderCanvas.height = 2000;
     currentOrderCanvas.style.display = 'none';
     currentOrderCanvas = document.body.appendChild(currentOrderCanvas);
     currentPlaceCanvas.width = 2000;
-    currentPlaceCanvas.height = 1000;
+    currentPlaceCanvas.height = 2000;
     currentPlaceCanvas.style.display = 'none';
     currentPlaceCanvas = document.body.appendChild(currentPlaceCanvas);
 
     Toastify({
-        text: 'Get access token...',
+        text: 'Getting access token...',
         duration: DEFAULT_TOAST_DURATION_MS
     }).showToast();
     accessToken = await getAccessToken();
@@ -108,19 +117,19 @@ let getPendingWork = (work, rgbaOrder, rgbaCanvas) => {
 
 function connectSocket() {
     Toastify({
-        text: 'Connecting to PlaceIndia server...',
+        text: 'Connecting to IndiaPlace server...',
         duration: DEFAULT_TOAST_DURATION_MS
     }).showToast();
 
-    socket = new WebSocket('wss://placeindia.devmire.com/api/ws');
+    socket = new WebSocket('wss://commando.burgmoment.repl.co/api/ws');
 
     socket.onopen = function () {
         Toastify({
-            text: 'Connected to PlaceIndia server!',
+            text: 'Connected to IndiaPlace server!',
             duration: DEFAULT_TOAST_DURATION_MS
         }).showToast();
         socket.send(JSON.stringify({ type: 'getmap' }));
-        socket.send(JSON.stringify({ type: 'brand', brand: 'userscriptV19' }));
+        socket.send(JSON.stringify({ type: 'brand', brand: 'userscriptV20' }));
     };
 
     socket.onmessage = async function (message) {
@@ -134,19 +143,19 @@ function connectSocket() {
         switch (data.type.toLowerCase()) {
             case 'map':
                 Toastify({
-                    text: `Load new folder (rode: ${data.reason ? data.reason : 'connected to server'})...`,
-        duration: DEFAULT_TOAST_DURATION_MS
+                    text: `Load new map (reden: ${data.reason ? data.reason : 'connected to server'})...`,
+                    duration: DEFAULT_TOAST_DURATION_MS
                 }).showToast();
-                currentOrderCtx = await getCanvasFromUrl(`https://placeindia.devmire.com/maps/${data.data}`, currentOrderCanvas, 0, 0, true);
-                order = getRealWork(currentOrderCtx.getImageData(0, 0, 2000, 1000).data);
+                currentOrderCtx = await getCanvasFromUrl(`https://commando.burgmoment.repl.co/maps/${data.data}`, currentOrderCanvas, 0, 0, true);
+                order = getRealWork(currentOrderCtx.getImageData(0, 0, 2000, 2000).data);
                 Toastify({
                     text: `New map loaded, ${order.length} pixels in totaal`,
                     duration: DEFAULT_TOAST_DURATION_MS
                 }).showToast();
                 break;
-                case 'toast':
+            case 'toast':
                 Toastify({
-                    text: `Bericht van server: ${data.message}`,
+                    text: `Message from server: ${data.message}`,
                     duration: data.duration || DEFAULT_TOAST_DURATION_MS,
                     style: data.style || {}
                 }).showToast();
@@ -158,10 +167,10 @@ function connectSocket() {
 
     socket.onclose = function (e) {
         Toastify({
-            text: `PlaceIndia server has disconnected: ${e.reason}`,
+            text: `IndiaPlace server has disconnected: ${e.reason}`,
             duration: DEFAULT_TOAST_DURATION_MS
         }).showToast();
-        console.error('Socket error: ', e.reason);
+        console.error('Socketfout: ', e.reason);
         socket.close();
         setTimeout(connectSocket, 1000);
     };
@@ -176,6 +185,8 @@ async function attemptPlace() {
     try {
         ctx = await getCanvasFromUrl(await getCurrentImageUrl('0'), currentPlaceCanvas, 0, 0, false);
         ctx = await getCanvasFromUrl(await getCurrentImageUrl('1'), currentPlaceCanvas, 1000, 0, false)
+        ctx = await getCanvasFromUrl(await getCurrentImageUrl('2'), currentPlaceCanvas, 0, 1000, false)
+        ctx = await getCanvasFromUrl(await getCurrentImageUrl('3'), currentPlaceCanvas, 1000, 1000, false)
     } catch (e) {
         console.warn('Error retrieving folder: ', e);
         Toastify({
@@ -186,8 +197,8 @@ async function attemptPlace() {
         return;
     }
 
-    const rgbaOrder = currentOrderCtx.getImageData(0, 0, 2000, 1000).data;
-    const rgbaCanvas = ctx.getImageData(0, 0, 2000, 1000).data;
+    const rgbaOrder = currentOrderCtx.getImageData(0, 0, 2000, 2000).data;
+    const rgbaCanvas = ctx.getImageData(0, 0, 2000, 2000).data;
     const work = getPendingWork(order, rgbaOrder, rgbaCanvas);
 
     if (work.length === 0) {
@@ -208,7 +219,7 @@ async function attemptPlace() {
     const hex = rgbaOrderToHex(i, rgbaOrder);
 
     Toastify({
-        text: `Trying to post pixel on ${x}, ${y}... (${percentComplete}% complete, ${workRemaining} left)`,
+        text: `Trying to post pixel on ${x}, ${y}... (${percentComplete}% complete , ${workRemaining} left)`,
         duration: DEFAULT_TOAST_DURATION_MS
     }).showToast();
 
@@ -262,7 +273,7 @@ function place(x, y, color) {
                             'y': y % 1000
                         },
                         'colorIndex': color,
-                        'canvasIndex': (x > 999 ? 1 : 0)
+                        'canvasIndex': getCanvas(x, y)
                     }
                 }
             },
@@ -276,6 +287,14 @@ function place(x, y, color) {
             'Content-Type': 'application/json'
         }
     });
+}
+
+function getCanvas(x, y) {
+    if (x <= 999) {
+        return y <= 999 ? 0 : 2;
+    } else {
+        return y <= 999 ? 1 : 3;
+    }
 }
 
 async function getAccessToken() {
@@ -337,8 +356,14 @@ async function getCurrentImageUrl(id = '0') {
 function getCanvasFromUrl(url, canvas, x = 0, y = 0, clearCanvas = false) {
     return new Promise((resolve, reject) => {
         let loadImage = ctx => {
+            GM.xmlHttpRequest({
+            method: "GET",
+            url: url,
+            responseType: 'blob',
+            onload: function(response) {
+            var urlCreator = window.URL || window.webkitURL;
+            var imageUrl = urlCreator.createObjectURL(this.response);
             var img = new Image();
-            img.crossOrigin = 'anonymous';
             img.onload = () => {
                 if (clearCanvas) {
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -353,7 +378,9 @@ function getCanvasFromUrl(url, canvas, x = 0, y = 0, clearCanvas = false) {
                 }).showToast();
                 setTimeout(() => loadImage(ctx), 3000);
             };
-            img.src = url;
+            img.src = imageUrl;
+  }
+})
         };
         loadImage(canvas.getContext('2d'));
     });
