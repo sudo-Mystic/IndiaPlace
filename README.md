@@ -6,7 +6,7 @@ The bot for IndiaPlace and their allies!.
 
 ## User script bot
 
-### Installation instructions (If you want instructions to update instead, [click here](https://github.com/PlaceIndia/Bot/blob/master/UPDATE.MD)
+### Installation instructions ( If you want instructions to update instead, [click here](https://github.com/PlaceIndia/Bot/blob/master/UPDATE.MD))
 
 before you start, make sure your cooldown has run out!
 
