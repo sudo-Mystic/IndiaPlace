@@ -10,6 +10,7 @@
 
 3. An update prompt should open, click on update
 
-![0404110644_chrome](https://user-images.githubusercontent.com/67459484/161480436-ceada702-c26e-43a8-8375-b4b0fa376db8.jpg)
+![0404110521_chrome](https://user-images.githubusercontent.com/67459484/161480537-74812761-a7a2-4b15-ad88-0d09e84ae678.jpg)
+
 
 4. Reload the r/place tab and the script should be working
