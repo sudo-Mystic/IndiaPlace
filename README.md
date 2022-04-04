@@ -10,7 +10,7 @@ The bot for IndiaPlace and their allies!.
 
 before you start, make sure your cooldown has run out!
 
-1. Click on [this link](https://github.com/PlaceIndia/Bot/raw/master/placenlbot.user.js) and add the Tampermonkey extension to your browser.
+1. Click on [this link](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo) and add the Tampermonkey extension to your browser.
 
 ![0404103833_chrome](https://user-images.githubusercontent.com/67459484/161477698-9378858a-999e-4943-bd71-30f69b9d0823.jpg)
 
