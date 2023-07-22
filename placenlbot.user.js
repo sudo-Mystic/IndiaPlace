@@ -20,7 +20,7 @@
 
 
 const VERSION = 19;
-const BACKEND_URL = '<serverurl.com>';
+const BACKEND_URL = 'indiaplace-commandserver.onrender.com';
 const BACKEND_API_WS_URL = `wss://${BACKEND_URL}/api/ws`;
 const BACKEND_API_MAPS = `https://${BACKEND_URL}/maps`;
 
