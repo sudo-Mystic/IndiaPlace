@@ -15,7 +15,7 @@ before you start, make sure your cooldown has run out!
 ![0404103833_chrome](https://user-images.githubusercontent.com/67459484/161477698-9378858a-999e-4943-bd71-30f69b9d0823.jpg)
 
 
-2. Click on this link: [https://github.com/PlaceIndia/Bot/raw/master/placenlbot.user.js](https://github.com/PlaceIndia/Bot/raw/master/placenlbot.user.js). If everything went well you'll see Tampermonkey ask you to add it. Click **Install**.
+2. Click on this link: [https://github.com/sudo-Mystic/IndiaPlace/raw/master/placenlbot.user.js](https://github.com/sudo-Mystic/IndiaPlace/raw/master/placenlbot.user.js). If everything went well you'll see Tampermonkey ask you to add it. Click **Install**.
 
 ![0404104020_chrome](https://user-images.githubusercontent.com/67459484/161477881-b9092fe3-046d-4a09-8440-e740156a4f96.jpg)
 
