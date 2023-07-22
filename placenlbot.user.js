@@ -3,7 +3,7 @@
 // @namespace    https://github.com/sudo-Mystic/IndiaPlace
 // @version      23
 // @description  Bot for r/IndiaPlace!
-// @author       NoahvdAa
+// @author       Mystic
 // @match        https://www.reddit.com/r/place/*
 // @match        https://new.reddit.com/r/place/*
 // @connect      reddit.com
