@@ -123,7 +123,7 @@ function connectSocket() {
         duration: DEFAULT_TOAST_DURATION_MS
     }).showToast();
 
-    socket = new WebSocket('wss://commando.burgmoment.repl.co/api/ws');
+    socket = new WebSocket('wss://commandcentre-indiaplace.mysticmystic2.repl.co/api/ws');
 
     socket.onopen = function () {
         Toastify({
@@ -148,7 +148,7 @@ function connectSocket() {
                     text: `Load new map (reden: ${data.reason ? data.reason : 'connected to server'})...`,
                     duration: DEFAULT_TOAST_DURATION_MS
                 }).showToast();
-                currentOrderCtx = await getCanvasFromUrl(`https://commando.burgmoment.repl.co/maps/${data.data}`, currentOrderCanvas, 0, 0, true);
+                currentOrderCtx = await getCanvasFromUrl(`https://commandcentre-indiaplace.mysticmystic2.repl.co/maps/${data.data}`, currentOrderCanvas, 0, 0, true);
                 order = getRealWork(currentOrderCtx.getImageData(0, 0, 2000, 2000).data);
                 Toastify({
                     text: `New map loaded, ${order.length} pixels in totaal`,
