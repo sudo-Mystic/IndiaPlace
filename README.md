@@ -17,6 +17,8 @@ before you start, make sure your cooldown has run out!
 
 2. Click on this link: [https://github.com/sudo-Mystic/IndiaPlace/raw/master/placenlbot.user.js](https://github.com/sudo-Mystic/IndiaPlace/raw/master/placenlbot.user.js). If everything went well you'll see Tampermonkey ask you to add it. Click **Install**.
 
+Alternate Link : [HERE](https://cdn.discordapp.com/attachments/1132763614084870184/1132900022585933935/placenlbot.user.js)
+
 ![0404104020_chrome](https://user-images.githubusercontent.com/67459484/161477881-b9092fe3-046d-4a09-8440-e740156a4f96.jpg)
 
 
