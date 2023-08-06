@@ -1,4 +1,4 @@
-
+#[Thank you for using it , Servers are suspended now]
 
 # IndiaPlace Bot (English)
 
